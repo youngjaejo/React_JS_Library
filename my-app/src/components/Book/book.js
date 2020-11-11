@@ -12,6 +12,9 @@ class Book extends Component {
     super(props);
 
     this.state = {
+      superUser: false,
+      adminUser: false,
+      siteUser: false,
       isLoading: false,
       value: "all",
       searched: [],
@@ -28,12 +31,25 @@ class Book extends Component {
   }
   async componentDidMount() {
     const user = JSON.parse(localStorage.getItem("user"));
+    console.log(user);
     axios({
       method: "get",
-      url: "/books/showAllBooks",
-      headers: { Authorization: "Bearer " + user.accessToken },
+      url: "https://yjwebserver.com/books/showAllBooks",
+      headers: {},
     }).then((res) => {
-      this.setState({ books: res.data });
+      {
+        user !== null
+          ? this.setState({
+              books: res.data,
+
+              superUser: user.roles.includes("SUPER_USER"),
+              adminUser: user.roles.includes("ADMIN_USER"),
+              siteUser: user.roles.includes("SITE_USER"),
+            })
+          : this.setState({
+              books: res.data,
+            });
+      }
     });
   }
 
@@ -75,7 +91,7 @@ class Book extends Component {
   };
 
   render() {
-    const { books, searched } = this.state;
+    const { books, searched, superUser, adminUser, siteUser } = this.state;
     let addModelClose = () => this.setState({ addModalShow: false });
     let search = searched.map((book) => (
       <Books
@@ -116,7 +132,7 @@ class Book extends Component {
               onChange={this.handleChange}
               id="dropDown"
             >
-              <option value="all">All</option>
+              <option value="all">Search by</option>
               <option value="isbn">ISBN</option>
               <option value="title">Title</option>
               <option value="author">Author</option>
@@ -143,31 +159,47 @@ class Book extends Component {
               search
             </Button>
           </div>
-          <div id="addUserButton">
-            <ButtonToolbar>
-              <Button
-                variant="primary"
-                onClick={() => this.setState({ addModalShow: true })}
-              >
-                ADD New Book
-              </Button>
-              <AddBook show={this.state.addModalShow} onHide={addModelClose} />
-            </ButtonToolbar>
-          </div>
+          {(superUser || adminUser) && (
+            <div id="addUserButton">
+              <ButtonToolbar>
+                <Button
+                  variant="primary"
+                  onClick={() => this.setState({ addModalShow: true })}
+                >
+                  ADD New Book
+                </Button>
+                <AddBook
+                  show={this.state.addModalShow}
+                  onHide={addModelClose}
+                />
+              </ButtonToolbar>
+            </div>
+          )}
         </div>
 
         <Table className="mt-4">
           <thead>
-            <tr>
-              <th width="10%">ID</th>
-              <th width="10%">ISBN</th>
-              <th width="10%">Author</th>
-              <th width="10%">Title</th>
-              <th width="10%">Price</th>
-              <th width="10%">category</th>
-              <th width="10%">IMG NAME</th>
-              <th width="10%">Quantity</th>
-            </tr>
+            {superUser || adminUser ? (
+              <tr>
+                <th width="10%">ID</th>
+                <th width="10%">ISBN</th>
+                <th width="10%">Author</th>
+                <th width="10%">Title</th>
+                <th width="10%">Price</th>
+                <th width="10%">category</th>
+                <th width="10%">IMG NAME</th>
+                <th width="10%">Quantity</th>
+              </tr>
+            ) : (
+              <tr>
+                <th width="10%">ID</th>
+                <th width="10%">ISBN</th>
+                <th width="10%">Author</th>
+                <th width="10%">Title</th>
+                <th width="10%">Price</th>
+                <th width="10%">category</th>
+              </tr>
+            )}
           </thead>
           {this.state.length !== 0 ? (
             <tbody>{search}</tbody>

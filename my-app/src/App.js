@@ -4,21 +4,20 @@ import Profile from "./components/profile.component";
 import "./App.css";
 import Login from "./components/login.component";
 import Book from "./components/Book/book";
-import AppNav from "./AppNav";
+import AppNav from "./bookstore/AppNav";
 import User from "./components/User/User";
+import Cart from "./components/Cart/Cart";
+import BookApp from "./bookstore/BookApp";
 class App extends Component {
   state = {};
   render() {
     return (
-      <Router>
-        <AppNav />
-        <Switch>
-          <Route path="/books" component={Book} />
-          <Route path="/login" component={Login} />
-          <Route path="/users" component={User} />
-          <Route path="/profile" component={Profile} />
-        </Switch>
-      </Router>
+      <div>
+        <Router>
+          <Route path="/" component={BookApp} />
+          {/* <Route path="/bookApp/login" component={Login} /> */}
+        </Router>
+      </div>
     );
   }
 }

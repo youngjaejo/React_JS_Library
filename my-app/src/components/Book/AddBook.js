@@ -47,7 +47,7 @@ class AddBook extends Component {
     formData.append("file", this.state.file);
     axios({
       method: "post",
-      url: "/books/save",
+      url: "https://yjwebserver.com/books/save",
       headers: {
         Authorization: "Bearer " + user.accessToken,
       },

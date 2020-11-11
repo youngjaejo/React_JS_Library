@@ -59,7 +59,7 @@ class EditBook extends Component {
 
   handleSubmit(event) {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (this.state.file === "null") {
+    if (this.state.file != null) {
       console.log(this.state.file);
       let formData = new FormData();
       formData.append(
@@ -71,7 +71,7 @@ class EditBook extends Component {
       formData.append("file", this.state.file);
       axios({
         method: "post",
-        url: "/books/editBook",
+        url: "https://yjwebserver.com/books/editBook",
         headers: {
           Authorization: "Bearer " + user.accessToken,
         },
@@ -80,7 +80,7 @@ class EditBook extends Component {
     } else {
       axios({
         method: "put",
-        url: "/books/editBook_noFile",
+        url: "https://yjwebserver.com/books/editBook_noFile",
         headers: { Authorization: "Bearer " + user.accessToken },
         data: {
           id: this.state.item.id,
